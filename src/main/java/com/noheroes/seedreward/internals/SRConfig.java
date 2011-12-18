@@ -5,12 +5,10 @@
 package com.noheroes.seedreward.internals;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -55,6 +53,6 @@ public class SRConfig {
     
     public String getString(String key)
     {
-        return config.getString(key);
+        return config.getString(key, (String) configDefaults.get(key));
     }
 }

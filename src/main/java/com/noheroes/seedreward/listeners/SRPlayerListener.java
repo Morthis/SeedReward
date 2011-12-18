@@ -22,9 +22,9 @@ public class SRPlayerListener extends PlayerListener {
         this.instance = instance;
     }
     
-    public void onPlayerJoin(PlayerJoinEvent player)
+    public void onPlayerJoin(PlayerJoinEvent playerEvent)
     {
-        PlayerLookupThread lookupThread = new PlayerLookupThread(player);
+        PlayerLookupThread lookupThread = new PlayerLookupThread(playerEvent);
         instance.getServer().getScheduler().scheduleAsyncDelayedTask(instance, lookupThread);
     }
 }

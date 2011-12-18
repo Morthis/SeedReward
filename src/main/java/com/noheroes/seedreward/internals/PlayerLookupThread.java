@@ -12,11 +12,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerLookupThread implements Runnable {
     
-    PlayerJoinEvent player;
+    PlayerJoinEvent playerEvent;
     
-    public PlayerLookupThread(PlayerJoinEvent player)
+    public PlayerLookupThread(PlayerJoinEvent playerEvent)
     {
-        this.player = player;
+        this.playerEvent = playerEvent;
     }
     
     @Override
