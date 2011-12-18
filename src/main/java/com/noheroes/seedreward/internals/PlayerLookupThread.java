@@ -4,6 +4,7 @@
  */
 package com.noheroes.seedreward.internals;
 
+import com.noheroes.seedreward.SeedReward;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
@@ -22,6 +23,6 @@ public class PlayerLookupThread implements Runnable {
     @Override
     public void run()
     {
-        
+        SeedReward.broadcast("Player Joined Test Message");
     }
 }

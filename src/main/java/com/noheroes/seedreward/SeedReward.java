@@ -9,6 +9,7 @@ import com.noheroes.seedreward.listeners.SRPlayerListener;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
@@ -19,6 +20,7 @@ public class SeedReward extends JavaPlugin {
     
     private static final Logger logger = Logger.getLogger("Minecraft");
     private final SRPlayerListener playerListener = new SRPlayerListener(this);
+    private static Server server;
     public SRConfig config;
     private String pluginPath;
     public File configFile;
@@ -35,12 +37,16 @@ public class SeedReward extends JavaPlugin {
         log(Level.INFO, "Plugin SeedRewards enabled");
         config = new SRConfig(configFile);
         
-        String test = config.getString("Hehe");
-        log(Level.INFO, test);
+        server = getServer();
     }
     
-    public void log(Level level, String msg)
+    public static void log(Level level, String msg)
     {
         logger.log(level, msg);
+    }
+    
+    public static void broadcast(String msg)
+    {
+        server.broadcastMessage(msg);
     }
 }
