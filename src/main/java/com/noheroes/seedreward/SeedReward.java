@@ -4,6 +4,7 @@
  */
 package com.noheroes.seedreward;
 
+import com.noheroes.seedreward.internals.SQLStorage;
 import com.noheroes.seedreward.internals.SRConfig;
 import com.noheroes.seedreward.listeners.SRPlayerListener;
 import com.noheroes.seedreward.listeners.SRPluginListener;
@@ -26,6 +27,8 @@ public class SeedReward extends JavaPlugin {
     private final SRPlayerListener playerListener = new SRPlayerListener(this);
     private final SRPluginListener pluginListener = new SRPluginListener(this);
     
+    private SQLStorage db;
+    
     private static Server server;
     public SRConfig config;
     private String pluginPath;
@@ -40,12 +43,15 @@ public class SeedReward extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
         
+        //Needs rewrite:
         pluginPath = getDataFolder().getAbsolutePath();
         configFile = new File(pluginPath + File.separatorChar + "config.yml");
         log(Level.INFO, "Plugin SeedRewards enabled");
         config = new SRConfig(configFile);
         
         server = getServer();
+        
+        db = new SQLStorage(this);
     }
     
     public static void log(Level level, String msg)
@@ -56,5 +62,9 @@ public class SeedReward extends JavaPlugin {
     public static void broadcast(String msg)
     {
         server.broadcastMessage(msg);
+    }
+    
+    protected SQLStorage getDB(){
+        return this.db;
     }
 }

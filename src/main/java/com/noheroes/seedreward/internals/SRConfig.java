@@ -15,6 +15,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
  *
  * @author PIETER
  */
+
+/*
+ * I don't think we need this class.  This stuff is all taken care of by the 
+ * Bukkit config class.
+ * 
+ */
 public class SRConfig {
     
     private YamlConfiguration config;

@@ -28,6 +28,7 @@ public class SQLStorage implements StorageInterface{
     private Connection rewardCon;
     private PreparedStatement userSteamQuery;
     private PreparedStatement userRewardQuery;
+    private PreparedStatement userResetReward;
     
     public SQLStorage(SeedReward plugin){
         this.sr = plugin;
@@ -45,6 +46,7 @@ public class SQLStorage implements StorageInterface{
             rewardCon = DriverManager.getConnection(Properties.rewardDBURL, 
                     Properties.rewardDBUser, Properties.rewardDBPass);
             userRewardQuery = rewardCon.prepareStatement(Properties.userRewardQuery);
+            userResetReward = rewardCon.prepareStatement(Properties.userRewardReset);
         } catch (SQLException ex) {
             SeedReward.log(Level.SEVERE, "Exception connecting to reward DB.");
             SeedReward.log(Level.SEVERE, ex.getMessage());
