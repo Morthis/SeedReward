@@ -1,0 +1,8 @@
+PlayerDB:
+  url: jdbc:mysql://localhost:3306/database
+  User: test
+  Pass: test
+RewardDB:
+  url: jdbc:mysql://localhost:3306/database
+  User: test1
+  Pass: test1

@@ -1,0 +1,20 @@
+/*
+ * Copyright (C) 2011 No Heroes.
+ * See readme for license details.
+ */
+package com.noheroes.seedreward.internals;
+
+/**
+ *
+ * @author Sorklin <sorklin at gmail.com>
+ */
+public class Properties {
+    
+    public static String playerDBURL;
+    public static String playerDBUser;
+    public static String playerDBPass;
+    
+    public static String rewardDBURL;
+    public static String rewardDBUser;
+    public static String rewardDBPass;
+}

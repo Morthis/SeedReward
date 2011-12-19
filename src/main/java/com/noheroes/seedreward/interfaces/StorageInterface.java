@@ -6,7 +6,7 @@ package com.noheroes.seedreward.interfaces;
 
 import org.bukkit.entity.Player;
 
-public interface SQLInterface {
+public interface StorageInterface {
     
     /**
      * Queries db for STEAMID.
