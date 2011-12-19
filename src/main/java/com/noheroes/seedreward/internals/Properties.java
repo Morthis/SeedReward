@@ -17,4 +17,7 @@ public class Properties {
     public static String rewardDBURL;
     public static String rewardDBUser;
     public static String rewardDBPass;
+    
+    public static final String userSteamQuery = "SELECT steamID from tbl_test WHERE name = ?";
+    public static final String userRewardQuery = "SELECT reward from tbl_test WHERE steamID = ?";
 }
