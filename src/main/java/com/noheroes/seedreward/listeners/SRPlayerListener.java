@@ -18,7 +18,7 @@ public class SRPlayerListener extends PlayerListener {
     
     SeedReward instance;
     // Stores task ID's associated with each player's login
-    HashMap<String, Integer> playerTaskID = new HashMap<String, Integer>();
+    static HashMap<String, Integer> playerTaskID = new HashMap<String, Integer>();
     
     public SRPlayerListener(SeedReward instance)
     {
@@ -40,5 +40,11 @@ public class SRPlayerListener extends PlayerListener {
         PlayerLookupThread lookupThread = new PlayerLookupThread(playerEvent);
         taskID = instance.getServer().getScheduler().scheduleAsyncDelayedTask(instance, lookupThread);
         playerTaskID.put(playerName, taskID);
+    }
+     
+    
+    public static void removeTask(String playerName)
+    {
+        playerTaskID.remove(playerName);
     }
 }
