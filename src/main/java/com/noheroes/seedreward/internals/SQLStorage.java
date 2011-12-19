@@ -54,7 +54,21 @@ public class SQLStorage implements StorageInterface{
     }
     
     public String getPlayerSteam(Player player) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String steamID = null;
+        ResultSet rs = null;
+        try {
+            if(userCon.isValid(2)){
+                userSteamQuery.clearParameters();
+                userSteamQuery.setString(1, player.getName());
+                rs = userSteamQuery.executeQuery();
+                steamID = rs.getString(1);
+            }
+        } catch (SQLException ex) {
+            SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
+            SeedReward.log(Level.SEVERE, ex.getMessage());
+        }
+        
+        return steamID;
     }
 
     public long getPlayerReward(String steamID) {
