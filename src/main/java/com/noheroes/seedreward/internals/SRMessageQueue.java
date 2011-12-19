@@ -5,8 +5,11 @@
 package com.noheroes.seedreward.internals;
 
 import com.noheroes.seedreward.SeedReward;
+
 import java.util.LinkedList;
 import java.util.Queue;
+
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -15,22 +18,21 @@ import java.util.Queue;
 public class SRMessageQueue {
     
     private SeedReward instance;
-    private static Queue<String> messageQueue = new LinkedList<String>();
+    private static Queue<SRMessage> messageQueue = new LinkedList<SRMessage>();
     private static checkMessages msgThread;
     private static int taskID;
-    private static final long defaultDelay = 200L;
     
     public SRMessageQueue(SeedReward instance)
     {
         this.instance = instance;
     }
     
-    public static boolean addMessage(String msg)
+    public static boolean addMessage(SRMessage msg)
     {
         return messageQueue.offer(msg);
     }
     
-    public static Object retrieveMessage()
+    public static SRMessage retrieveMessage()
     {
         return messageQueue.poll();
     }
@@ -47,7 +49,7 @@ public class SRMessageQueue {
         else
         {
             msgThread = new checkMessages();
-            taskID = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, msgThread, 0, defaultDelay);   
+            taskID = instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance, msgThread, 0, Properties.defaultDelay);   
             return true;
         }
     }
@@ -67,14 +69,19 @@ public class SRMessageQueue {
 
 class checkMessages implements Runnable {
     
-    Object msg;
+    SRMessage msg;
 
     public void run() {
         
         msg = SRMessageQueue.retrieveMessage();
-        while(msg != null)
-        {
-            SeedReward.broadcast(msg.toString());
+        while(msg != null){
+            String m = msg.getMessage();
+            Player p = msg.getPlayer();
+            //Most important:
+            if(p.isOnline())
+                p.sendMessage(m);
+            //Not so important (if it doesn't hit everyone).
+            SeedReward.broadcast(m);
             msg = SRMessageQueue.retrieveMessage();
         }         
     }    

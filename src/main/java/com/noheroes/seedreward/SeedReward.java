@@ -7,6 +7,7 @@ package com.noheroes.seedreward;
 import com.noheroes.seedreward.internals.SQLStorage;
 import com.noheroes.seedreward.internals.SRConfig;
 import com.noheroes.seedreward.internals.SRMessageQueue;
+import com.noheroes.seedreward.internals.SRMessage;
 import com.noheroes.seedreward.listeners.SRPlayerListener;
 import com.noheroes.seedreward.listeners.SRPluginListener;
 
@@ -70,10 +71,10 @@ public class SeedReward extends JavaPlugin {
         server.broadcastMessage(msg);
     }
     
-    public static void addMessage(String msg)
-    {
-        messageQueue.addMessage(msg);
-    }
+    //Its static, so we don't really need this.
+//    public static void addMessage(SRMessage msg){
+//        messageQueue.addMessage(msg);
+//    }
         
     protected SQLStorage getDB(){
         return this.db;
