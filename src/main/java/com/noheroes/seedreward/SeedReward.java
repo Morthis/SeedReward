@@ -4,20 +4,21 @@
  */
 package com.noheroes.seedreward;
 
+import com.noheroes.seedreward.internals.Properties;
 import com.noheroes.seedreward.internals.SQLStorage;
-import com.noheroes.seedreward.internals.SRConfig;
 import com.noheroes.seedreward.internals.SRMessageQueue;
 import com.noheroes.seedreward.internals.SRMessage;
 import com.noheroes.seedreward.listeners.SRPlayerListener;
 import com.noheroes.seedreward.listeners.SRPluginListener;
 
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,12 +34,10 @@ public class SeedReward extends JavaPlugin {
     private SQLStorage db;
     
     private static Server server;
-    public SRConfig config;
-    private String pluginPath;
-    public File configFile;
 
     public void onDisable() {
-        log(Level.INFO, "Plugin SeedRewards disabled");
+        PluginDescriptionFile pdf = this.getDescription();
+        log(Level.INFO, pdf.getName() + " is disabled");
         messageQueue.stopScheduler();
     }
 
@@ -47,18 +46,18 @@ public class SeedReward extends JavaPlugin {
         pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
         pm.registerEvent(Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
         
-        //Needs rewrite:
-        pluginPath = getDataFolder().getAbsolutePath();
-        configFile = new File(pluginPath + File.separatorChar + "config.yml");
-        log(Level.INFO, "Plugin SeedRewards enabled");
-        config = new SRConfig(configFile);
-
         server = getServer();   
+        
+        loadSRConfig(this.getConfig());
+        this.saveConfig();
 
         messageQueue = new SRMessageQueue(this);
         messageQueue.startScheduler();
         
         db = new SQLStorage(this);
+        
+        PluginDescriptionFile pdf = this.getDescription();
+        log(Level.INFO, pdf.getName() + " version " + pdf.getVersion() + " is enabled.");
     }
     
     public static void log(Level level, String msg)
@@ -69,14 +68,22 @@ public class SeedReward extends JavaPlugin {
     public static void broadcast(String msg)
     {
         server.broadcastMessage(msg);
-    }
-    
-    //Its static, so we don't really need this.
-//    public static void addMessage(SRMessage msg){
-//        messageQueue.addMessage(msg);
-//    }
+    }   
         
-    protected SQLStorage getDB(){
+    public SQLStorage getDB(){
         return this.db;
     }
+    
+    private void loadSRConfig(FileConfiguration config) 
+    {
+        config.options().copyDefaults(true);
+
+        Properties.playerDBURL = config.getString("PlayerDB.url");
+        Properties.playerDBUser = config.getString("PlayerDB.User");
+        Properties.playerDBPass = config.getString("PlayerDB.Pass");
+        
+        Properties.rewardDBURL = config.getString("RewardDB.url");
+        Properties.rewardDBUser = config.getString("RewardDB.User");
+        Properties.rewardDBPass = config.getString("RewardDB.Pass");
+    }    
 }

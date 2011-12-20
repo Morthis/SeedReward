@@ -42,7 +42,7 @@ public class SRPlayerListener extends PlayerListener {
                 return;
         }
         
-        PlayerLookupThread lookupThread = new PlayerLookupThread(playerEvent, this);
+        PlayerLookupThread lookupThread = new PlayerLookupThread(playerEvent, this, instance);
         taskID = instance.getServer().getScheduler().scheduleAsyncDelayedTask(instance, lookupThread);
         synchronized (playerTaskID) {
             playerTaskID.put(player, taskID);

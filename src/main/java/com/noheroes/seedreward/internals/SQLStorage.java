@@ -56,6 +56,10 @@ public class SQLStorage implements StorageInterface{
     public String getPlayerSteam(Player player) {
         String steamID = null;
         ResultSet rs = null;
+        
+        if (userCon == null)
+            return steamID;
+
         try {
             if(userCon.isValid(2)){
                 userSteamQuery.clearParameters();
@@ -67,7 +71,7 @@ public class SQLStorage implements StorageInterface{
             SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
             SeedReward.log(Level.SEVERE, ex.getMessage());
         }
-        
+      
         return steamID;
     }
 

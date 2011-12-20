@@ -14,8 +14,13 @@ public class SRMessage {
     private Player player;
     private String message;
     
-    public SRMessage(Player player, String message){
+    public SRMessage(String message, Player player){
         this.player = player;
+        this.message = message;
+    }
+    
+    public SRMessage(String message) {
+        this.player = null;
         this.message = message;
     }
     
