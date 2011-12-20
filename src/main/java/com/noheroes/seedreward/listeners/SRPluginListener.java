@@ -5,34 +5,52 @@
 package com.noheroes.seedreward.listeners;
 
 import com.noheroes.seedreward.SeedReward;
+import com.noheroes.seedreward.internals.DummyBalance;
+import com.noheroes.seedreward.internals.iConomy5Balance;
+import com.noheroes.seedreward.internals.iConomy6Balance;
+
+import java.util.logging.Level;
 
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
+import org.bukkit.plugin.Plugin;
 
-/**
- *
- * @author PIETER
- */
+
 public class SRPluginListener extends ServerListener {
     
-    SeedReward instance;
+    private SeedReward sr;
     
     public SRPluginListener(SeedReward instance){
-        this.instance = instance;
+        this.sr = instance;
     }
 
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        super.onPluginEnable(event);
-        //iconomy late loading here.
+        Plugin p = event.getPlugin();
+        
+        if(p.getClass().getName().equals("com.iCo6.iConomy")) {
+            SeedReward.setBalanceHandler(new iConomy6Balance(sr, (com.iCo6.iConomy)p));
+            SeedReward.log(Level.INFO, "Hooked iConomy 6.");
+        } 
+
+        else if(p.getClass().getName().equals("com.iConomy.iConomy")) {
+            SeedReward.setBalanceHandler(new iConomy5Balance(sr, (com.iConomy.iConomy)p));
+            SeedReward.log(Level.INFO, "Hooked iConomy 5.");
+        }
     }
 
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
-        super.onPluginDisable(event);
-        //iconomy unloading here (if necessary).
+        Plugin p = event.getPlugin();
+        if(p.getClass().getName().equals("com.iCo6.iConomy")) {
+            SeedReward.setBalanceHandler(new DummyBalance(sr));
+            SeedReward.log(Level.INFO, "Unhooked iConomy 6. Using Dummy balance handler.");
+        }
+        
+        else if(p.getClass().getName().equals("com.iConomy.iConomy")) {
+            SeedReward.setBalanceHandler(new DummyBalance(sr));
+            SeedReward.log(Level.INFO, "Unhooked iConomy 5. Using Dummy balance handler.");
+        }
     }
-    
-    
 }

@@ -38,5 +38,19 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.iConomy</groupId>
+            <artifactId>iConomy</artifactId>
+            <version>5.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.iCo6</groupId>
+            <artifactId>iConomy</artifactId>
+            <version>6.0.8b</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
   </dependencies>
 </project>
