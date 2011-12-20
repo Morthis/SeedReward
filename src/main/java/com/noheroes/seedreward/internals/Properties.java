@@ -10,6 +10,9 @@ package com.noheroes.seedreward.internals;
  */
 public class Properties {
     
+    // Prevents instances of this class from being created as it would serve no purpose
+    private Properties() {}
+    
     public static String playerDBURL;
     public static String playerDBUser;
     public static String playerDBPass;

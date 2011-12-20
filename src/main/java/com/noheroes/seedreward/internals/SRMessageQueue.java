@@ -77,11 +77,15 @@ class checkMessages implements Runnable {
         while(msg != null){
             String m = msg.getMessage();
             Player p = msg.getPlayer();
-            //Most important:
-            if(p.isOnline())
-                p.sendMessage(m);
-            //Not so important (if it doesn't hit everyone).
-            SeedReward.broadcast(m);
+            if (p == null)
+            {
+                SeedReward.broadcast(m);
+            }
+            else
+            {
+                if (p.isOnline())
+                    p.sendMessage(m);
+            }
             msg = SRMessageQueue.retrieveMessage();
         }         
     }    
