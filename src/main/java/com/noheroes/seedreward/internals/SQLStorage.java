@@ -7,6 +7,10 @@ package com.noheroes.seedreward.internals;
 import com.noheroes.seedreward.SeedReward;
 import com.noheroes.seedreward.interfaces.StorageInterface;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -54,23 +58,50 @@ public class SQLStorage implements StorageInterface{
     }
     
     public String getPlayerSteam(Player player) {
-        String steamID = null;
-        ResultSet rs = null;
+        /*
+         * I'm leaving two options in here, depending on what we go with.
+         */
         
-        if (userCon == null)
-            return steamID;
-
+        //PHP:
+        String steamID = null;
+        
         try {
-            if(userCon.isValid(2)){
-                userSteamQuery.clearParameters();
-                userSteamQuery.setString(1, player.getName());
-                rs = userSteamQuery.executeQuery();
-                steamID = rs.getString(1);
+            URL url = new URL(Properties.ConnectionURL.replace("%name%", player.getName()));
+            URLConnection conn = url.openConnection();
+
+            InputStream istream = conn.getInputStream();
+            
+            int ch;
+            byte[] bytes = new byte[1];
+            while ((ch = istream.read()) != -1) {
+                bytes[0] = (byte) ch;
+                steamID = steamID + new String(bytes);
             }
-        } catch (SQLException ex) {
-            SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
-            SeedReward.log(Level.SEVERE, ex.getMessage());
+            istream.close();
+        } catch (IOException e) {
+            SeedReward.log(Level.WARNING, "Exception trying to read from website.");
+            e.printStackTrace(); //We'll remove this line when its debugged.  
+            //MC restarts on severe codes, which we don't want if the website is down.
         }
+        
+        //SQL:
+//        String steamID = null;
+//        ResultSet rs = null;
+//        
+//        if (userCon == null)
+//            return steamID;
+//
+//        try {
+//            if(userCon.isValid(2)){
+//                userSteamQuery.clearParameters();
+//                userSteamQuery.setString(1, player.getName());
+//                rs = userSteamQuery.executeQuery();
+//                steamID = rs.getString(1);
+//            }
+//        } catch (SQLException ex) {
+//            SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
+//            SeedReward.log(Level.SEVERE, ex.getMessage());
+//        }
       
         return steamID;
     }

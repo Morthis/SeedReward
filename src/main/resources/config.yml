@@ -6,3 +6,4 @@ RewardDB:
   url: jdbc:mysql://localhost:3306/database
   User: test1
   Pass: test1
+LookupURL: http://www.dummy.com/lookup.php?name=%name%

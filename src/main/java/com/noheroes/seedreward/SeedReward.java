@@ -37,7 +37,6 @@ public class SeedReward extends JavaPlugin {
     private static Balance iConomy = null;
     
     private SQLStorage db;
-    
     private static Server server;
 
     public void onDisable() {
@@ -123,5 +122,7 @@ public class SeedReward extends JavaPlugin {
         Properties.rewardDBURL = config.getString("RewardDB.url");
         Properties.rewardDBUser = config.getString("RewardDB.User");
         Properties.rewardDBPass = config.getString("RewardDB.Pass");
+        
+        Properties.ConnectionURL = config.getString("LookupURL");
     }    
 }
