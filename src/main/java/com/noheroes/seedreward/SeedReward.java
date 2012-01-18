@@ -124,5 +124,5 @@ public class SeedReward extends JavaPlugin {
         Properties.rewardDBPass = config.getString("RewardDB.Pass");
         
         Properties.ConnectionURL = config.getString("LookupURL");
-    }    
+    }  
 }

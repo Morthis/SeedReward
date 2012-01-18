@@ -34,7 +34,13 @@ public class PlayerLookupThread implements Runnable {
     }
     
     @Override
-    public void run(){                    
+    public void run(){ 
+        if (sr.getBalanceHandler() instanceof DummyBalance)
+        {
+            taskCleanup();
+            return;
+        }
+        
         steamID = sr.getDB().getPlayerSteam(player);
         
         if(steamID == null)

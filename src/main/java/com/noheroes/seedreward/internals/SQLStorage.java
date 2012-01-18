@@ -115,7 +115,8 @@ public class SQLStorage implements StorageInterface{
     }
 
     public boolean rewardPlayer(Player player, long amount) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        sr.getBalanceHandler().add(player, amount);
+        return true;
     }
     
 }
