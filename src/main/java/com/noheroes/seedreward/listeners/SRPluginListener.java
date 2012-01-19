@@ -28,7 +28,7 @@ public class SRPluginListener extends ServerListener {
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
         Plugin p = event.getPlugin();
-        
+        /*
         if(p.getClass().getName().equals("com.iCo6.iConomy")) {
             SeedReward.setBalanceHandler(new iConomy6Balance(sr, (com.iCo6.iConomy)p));
             SeedReward.log(Level.INFO, "Hooked iConomy 6.");
@@ -38,11 +38,13 @@ public class SRPluginListener extends ServerListener {
             SeedReward.setBalanceHandler(new iConomy5Balance(sr, (com.iConomy.iConomy)p));
             SeedReward.log(Level.INFO, "Hooked iConomy 5.");
         }
+         */
     }
 
     @Override
     public void onPluginDisable(PluginDisableEvent event) {
         Plugin p = event.getPlugin();
+        /*
         if(p.getClass().getName().equals("com.iCo6.iConomy")) {
             SeedReward.setBalanceHandler(new DummyBalance(sr));
             SeedReward.log(Level.INFO, "Unhooked iConomy 6. Using Dummy balance handler.");
@@ -52,5 +54,7 @@ public class SRPluginListener extends ServerListener {
             SeedReward.setBalanceHandler(new DummyBalance(sr));
             SeedReward.log(Level.INFO, "Unhooked iConomy 5. Using Dummy balance handler.");
         }
+         * 
+         */
     }
 }

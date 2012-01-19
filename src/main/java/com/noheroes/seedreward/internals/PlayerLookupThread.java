@@ -6,6 +6,7 @@ package com.noheroes.seedreward.internals;
 import com.noheroes.seedreward.SeedReward;
 import com.noheroes.seedreward.listeners.SRPlayerListener;
 
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -35,7 +36,7 @@ public class PlayerLookupThread implements Runnable {
     
     @Override
     public void run(){ 
-        if (sr.getBalanceHandler() instanceof DummyBalance)
+        if (!sr.EconomyHooked())
         {
             taskCleanup();
             return;
@@ -60,12 +61,17 @@ public class PlayerLookupThread implements Runnable {
         {
             if (sr.getDB().resetPlayerReward(steamID))
             {
-                sr.getDB().rewardPlayer(player, reward);
-                SRMessageQueue.addMessage(new SRMessage(
-                        r + "[Server]" + w + " You have earned " + reward.toString() + " ducats from seeding.", player));
-                SRMessageQueue.addMessage(new SRMessage(
-                        r + "[Server] " + w + player.getName() + " has earned " + reward.toString() +
-                        " ducats from seeding.  Type /help seeding to learn more."));
+                if (sr.getDB().rewardPlayer(player, reward)) {
+                    SRMessageQueue.addMessage(new SRMessage(
+                            r + "[Server]" + w + " You have earned " + reward.toString() + " ducats from seeding.", player));
+                    SRMessageQueue.addMessage(new SRMessage(
+                            r + "[Server] " + w + player.getName() + " has earned " + reward.toString() +
+                            " ducats from seeding.  Type /help seeding to learn more."));
+                }
+                else
+                {
+                    sr.log(Level.SEVERE, "Failed to add " + reward.toString() + " ducats to " + player.getName() + "'s account.");
+                }
             }
         }
         

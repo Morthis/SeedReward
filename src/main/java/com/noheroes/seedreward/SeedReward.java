@@ -17,12 +17,14 @@ import com.noheroes.seedreward.listeners.SRPluginListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -34,10 +36,12 @@ public class SeedReward extends JavaPlugin {
     private final SRPluginListener pluginListener = new SRPluginListener(this);
     
     private static SRMessageQueue messageQueue;
-    private static Balance iConomy = null;
+    //private static Balance iConomy = null;
     
     private SQLStorage db;
     private static Server server;
+    
+    public static Economy econ = null;
 
     public void onDisable() {
         PluginDescriptionFile pdf = this.getDescription();
@@ -65,6 +69,9 @@ public class SeedReward extends JavaPlugin {
         //We do have a plugin listener active, in case the iconomy plugin is enabled
         //or disabled after this loads. We try 6, then 5, then dummy, in case more than
         //one is active.
+        
+        // Disabled while experimenting with vault as replacement
+        /*
         if(pm.isPluginEnabled("iConomy")){
             if(pm.getPlugin("iConomy").getClass().getName().equals("com.iCo6.iConomy")) {
                 iConomy = new iConomy6Balance(this, (com.iCo6.iConomy)pm.getPlugin("iConomy"));
@@ -87,8 +94,13 @@ public class SeedReward extends JavaPlugin {
             iConomy = new DummyBalance(this);
             SeedReward.log(Level.INFO, "No economy plugin found. Using Dummy economy.");
         }
-        
+*/
         PluginDescriptionFile pdf = this.getDescription();
+    
+        if (!setupEconomy()) {
+            log(Level.SEVERE, pdf.getName() + " - Vault failed to hook into server economy plugin");
+        }
+        
         log(Level.INFO, pdf.getName() + " version " + pdf.getVersion() + " is enabled.");
     }
     
@@ -104,6 +116,12 @@ public class SeedReward extends JavaPlugin {
         return this.db;
     }
     
+    public boolean EconomyHooked()
+    {
+        return econ != null;
+    }
+    
+    /*
     public static Balance getBalanceHandler() {
         return iConomy;
     }
@@ -111,7 +129,7 @@ public class SeedReward extends JavaPlugin {
     public static void setBalanceHandler(Balance handler) {
         iConomy = handler;
     }
-    
+    */
     private void loadSRConfig(FileConfiguration config) {
         config.options().copyDefaults(true);
 
@@ -124,5 +142,14 @@ public class SeedReward extends JavaPlugin {
         Properties.rewardDBPass = config.getString("RewardDB.Pass");
         
         Properties.ConnectionURL = config.getString("LookupURL");
-    }  
+    }     
+    
+     private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        econ = rsp.getProvider();
+        return econ != null;
+    }
 }

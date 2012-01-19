@@ -18,6 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.logging.Level;
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.entity.Player;
 
 /**
@@ -115,8 +117,15 @@ public class SQLStorage implements StorageInterface{
     }
 
     public boolean rewardPlayer(Player player, long amount) {
-        sr.getBalanceHandler().add(player, amount);
-        return true;
+        if (!sr.EconomyHooked())
+            return false;
+        
+        EconomyResponse response;
+        response = sr.econ.depositPlayer(player.getName(), amount);
+        if (response.type == ResponseType.SUCCESS)
+            return true;
+        else
+            return false;
     }
     
 }

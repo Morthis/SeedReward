@@ -2,5 +2,5 @@ name: SeedReward
 main: com.noheroes.seedreward.SeedReward
 version: 0.1
 authors: [Sorklin, Morthis]
-softdepend: [iconomy]
+softdepend: [iconomy, Vault]
 description: Rewards players for seeding TF2 and other supported games.
