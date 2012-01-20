@@ -128,4 +128,15 @@ public class SQLStorage implements StorageInterface{
             return false;
     }
     
+    public boolean chargePlayer(Player player, long amount) {
+        if (!sr.EconomyHooked())
+            return false;
+
+        EconomyResponse response;
+        response = sr.econ.withdrawPlayer(player.getName(), amount);
+        if (response.type == ResponseType.SUCCESS)
+            return true;
+        else
+            return false;
+    }
 }

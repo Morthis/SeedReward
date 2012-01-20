@@ -36,44 +36,67 @@ public class PlayerLookupThread implements Runnable {
     
     @Override
     public void run(){ 
-        if (!sr.EconomyHooked())
-        {
-            taskCleanup();
-            return;
-        }
-        
+                
         steamID = sr.getDB().getPlayerSteam(player);
         
-        if(steamID == null)
-        {
+        
+        if(steamID == null) {
+            sr.log(Level.WARNING, "SeedReward - Unable to look up SteamID of player " + player.getName());
+            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
+                    " Unable to look up your SteamID.  The database may be temporarily offline or your steamID is not added to your profile.", player));
             taskCleanup();
             return;
         }
         
-        reward = sr.getDB().getPlayerReward(steamID);
+        reward = sr.getDB().getPlayerReward(steamID);       
         
-        if (reward == 0)
-        {
+        if (reward == null) {
+            sr.log(Level.WARNING, "SeedReward - Unable to load reward value from database");
+            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
+                    " Unable to look up your rewards earned for seeding.  The rewards database may be temporarily offline.", player));
+            taskCleanup();
+            return;
+        }
+        
+        if (reward == 0) {
             SRMessageQueue.addMessage(new SRMessage(
                     r + "[Server]" + w + " You have not earned any ducats from seeding. To learn more type /help seeding.", player));
+            taskCleanup();
+            return;
         }
-        else
-        {
-            if (sr.getDB().resetPlayerReward(steamID))
-            {
-                if (sr.getDB().rewardPlayer(player, reward)) {
-                    SRMessageQueue.addMessage(new SRMessage(
-                            r + "[Server]" + w + " You have earned " + reward.toString() + " ducats from seeding.", player));
-                    SRMessageQueue.addMessage(new SRMessage(
-                            r + "[Server] " + w + player.getName() + " has earned " + reward.toString() +
-                            " ducats from seeding.  Type /help seeding to learn more."));
+        
+        if (sr.getDB().rewardPlayer(player, reward)) {
+            if (sr.getDB().resetPlayerReward(steamID)) {
+                // Rewarded player successfully and reset DB successfully
+                SRMessageQueue.addMessage(new SRMessage(
+                        r + "[Server]" + w + " You have earned " + reward.toString() + " ducats from seeding.", player));
+                SRMessageQueue.addMessage(new SRMessage(
+                        r + "[Server] " + w + player.getName() + " has earned " + reward.toString() +
+                        " ducats from seeding.  Type /help seeding to learn more."));                    
+            }
+            else {
+                // Rewarded player successfully but DB reset failed
+                if (sr.getDB().chargePlayer(player, reward)) {
+                    // Player's balance reset back to normal following a DB reset failure
+                    SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
+                            " You have earned " + reward.toString() + 
+                            " ducats from seeding.  The ducats could not be awarded, likely because the database is temporarily offline." + 
+                            "  They will be awarded next time you log on.", player));
+                    sr.log(Level.WARNING, "SeedReward - Unable to reset the reward database for player " + player.getName());
                 }
-                else
-                {
-                    sr.log(Level.SEVERE, "Failed to add " + reward.toString() + " ducats to " + player.getName() + "'s account.");
+                else {
+                    // Player's balance did not reset back to normal following a DB reset failure
+                    sr.log(Level.SEVERE, "SeedReward - Player " + player.getName() + " received his seeding reward when the reward database reset failed.");
                 }
             }
         }
+        else {
+            // Failed to reward player, database reset not attempted
+            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
+                    " You have earned " + reward.toString() + " ducats from seeding.  Because the economy plugin is currently not working or disabled " + 
+                    "these will be awarded to you next time you log in."));
+            sr.log(Level.WARNING, "SeedReward - Unable to award player " + player.getName() + " his seeding reward.");
+        }                
         
         // Removes the task ID from the hashmap, this should be the last line so that it is executed right before the thread finishes
         taskCleanup();

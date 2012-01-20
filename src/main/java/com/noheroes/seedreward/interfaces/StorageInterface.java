@@ -45,4 +45,12 @@ public interface StorageInterface {
      */
     public boolean rewardPlayer(Player player, long amount);
     
+     /**
+     * Decrements the iconomy database for the player.
+     * @param player
+     * @param amount Amount to decrement.
+     * @return Success/Failure
+     */
+    public boolean chargePlayer(Player player, long amount);
+    
 }
