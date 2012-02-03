@@ -24,7 +24,7 @@ public class Properties {
     public static String ConnectionURL;
     
     public static final String userSteamQuery = "SELECT steamID from tbl_test WHERE name = ?";
-    public static final String userRewardQuery = "SELECT reward from tbl_test WHERE steamID = ?";
+    public static final String userRewardQuery = "SELECT ducats FROM reward WHERE steamID = ?";
     public static final String userRewardReset = "UPDATE tbl_test SET reward = 0 WHERE steamID = ?";
     
     public static final long defaultDelay = 60L;

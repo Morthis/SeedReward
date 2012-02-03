@@ -20,7 +20,7 @@ public interface StorageInterface {
      * @param steamID The Player's steamID
      * @return The reward in long.
      */
-    public long getPlayerReward(String steamID);
+    public Long getPlayerReward(String steamID);
     
     /**
      * Reset the player's reward in the reward db.

@@ -3,7 +3,7 @@ PlayerDB:
   User: test
   Pass: test
 RewardDB:
-  url: jdbc:mysql://localhost:3306/database
-  User: test1
-  Pass: test1
+  url: jdbc:mysql://64.34.176.215:3306/tst_reward
+  User: tst_reward
+  Pass: CBwy5xTNmAMvN5mx
 LookupURL: http://www.dummy.com/lookup.php?name=%name%

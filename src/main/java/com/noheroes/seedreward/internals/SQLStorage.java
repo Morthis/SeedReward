@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.entity.Player;
@@ -63,7 +64,7 @@ public class SQLStorage implements StorageInterface{
         /*
          * I'm leaving two options in here, depending on what we go with.
          */
-        
+        /*
         //PHP:
         String steamID = null;
         
@@ -84,7 +85,7 @@ public class SQLStorage implements StorageInterface{
             SeedReward.log(Level.WARNING, "Exception trying to read from website.");
             e.printStackTrace(); //We'll remove this line when its debugged.  
             //MC restarts on severe codes, which we don't want if the website is down.
-        }
+        }*/
         
         //SQL:
 //        String steamID = null;
@@ -104,16 +105,52 @@ public class SQLStorage implements StorageInterface{
 //            SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
 //            SeedReward.log(Level.SEVERE, ex.getMessage());
 //        }
+        
+        String steamID = null;
+        steamID = "STEAM_0:1:37108831";
       
         return steamID;
     }
 
-    public long getPlayerReward(String steamID) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Long getPlayerReward(String steamID) {
+        Long reward = null;
+        ResultSet rs = null;
+        
+        try {
+            userRewardQuery.setString(1, steamID);
+        } catch (SQLException ex) {
+            SeedReward.log(Level.SEVERE, "SeedReward - Error updating prepared statement");
+            SeedReward.log(Level.SEVERE, ex.toString());
+            return reward;
+        }
+        
+        try {
+            rs = userRewardQuery.executeQuery();
+        } catch (SQLException ex) {
+            SeedReward.log(Level.SEVERE, "SeedReward - Error querying rewards database");
+            SeedReward.log(Level.SEVERE, ex.toString());
+            return reward;
+        }
+        
+        if (rs == null)
+            return reward;
+                
+        try {
+            if (!rs.first())
+                return reward;
+            reward = rs.getLong(1);
+        } catch (SQLException ex) {
+            SeedReward.log(Level.SEVERE, "SeedReward - Error accessing result set");
+            SeedReward.log(Level.SEVERE, ex.toString());
+            return null;
+        }
+        
+        
+        return reward;
     }
 
     public boolean resetPlayerReward(String steamID) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
 
     public boolean rewardPlayer(Player player, long amount) {
