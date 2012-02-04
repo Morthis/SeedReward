@@ -12,5 +12,17 @@ Messages:
     Send: true
     Message: You earned $R$ ducats today from seeding the TF2 Servers. Good Job!
   NoReward:
+    Send: false
+    Message: You didn't earn a seeding reward.
+  RewardServer:
     Send: true
-    Message: You earned $R$ ducats today from seeding the TF2 Servers. Good Job!
+    Message: $P$ just earned $R$ ducats from seeding the TF2 servers!
+  NoRewardServer:
+    Send: false
+    Message: Did you know it is possible to earn ducats while seeding?
+  NoSteamID:
+    Send: false
+    Message: Could not find a steam ID for you.
+  DatabaseError:
+    Send: true
+    Message: The seed reward database could not be contacted or had an error.

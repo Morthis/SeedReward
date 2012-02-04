@@ -88,12 +88,7 @@ public class SeedReward extends JavaPlugin {
     }
 
     private void loadSRConfig(FileConfiguration config) {
-        
-        //config.addDefault("Messages.Reward.Send", true);
-        //config.addDefault("Messages.Reward.Message", "You earned $R$ ducats today from seeding the TF2 Servers. Good Job!");
-        
-        
-        config.options().copyDefaults(true);
+       config.options().copyDefaults(true);
 
         Properties.playerDBURL = config.getString("PlayerDB.url");
         Properties.playerDBUser = config.getString("PlayerDB.User");
@@ -107,7 +102,15 @@ public class SeedReward extends JavaPlugin {
         
         Properties.showRewardMsg = config.getBoolean("Messages.Reward.Send");
         Properties.rewardMsg = config.getString("Messages.Reward.Message");
-               
+        
+        Properties.showNoRewardMsg = config.getBoolean("Messages.NoReward.Send");
+        Properties.noRewardMsg = config.getString("Messages.NoReward.Message");
+        
+        Properties.showRewardServerMsg = config.getBoolean("Messages.RewardServer.Send");
+        Properties.rewardServerMsg = config.getString("Messages.RewardServer.Message");
+        
+        Properties.showNoRewardServerMsg = config.getBoolean("Messages.NoRewardServer.Send");
+        Properties.noRewardServerMsg = config.getString("Messages.NoRewardServer.Message");             
     }     
     
      private boolean setupEconomy() {

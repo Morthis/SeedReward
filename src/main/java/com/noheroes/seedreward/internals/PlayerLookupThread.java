@@ -67,19 +67,14 @@ public class PlayerLookupThread implements Runnable {
         
         if (sr.getDB().rewardPlayer(player, reward)) {
             if (sr.getDB().resetPlayerReward(steamID)) {
-                // Rewarded player successfully and reset DB successfully
-                String message;
-                message = Properties.rewardMsg;
+                // Rewarded player successfully and reset DB successfully               
                 
-                message.replace("$R$", "test");
-                
-                sr.log(Level.INFO, Properties.rewardMsg);
-                sr.log(Level.INFO, message);
-                
-                //SRMessageQueue.addMessage(new SRMessage(
-                       // r + "[Server]" + w + message, player));
-                //SRMessageQueue.addMessage(new SRMessage(
-                  //      r + "[Server] " + w + Properties.rewardMsg));                    
+                if (Properties.showRewardMsg)
+                    SRMessageQueue.addMessage(new SRMessage( r + "[Server]" + w + 
+                            fillInMessage(Properties.rewardMsg, player, reward), player));
+                if (Properties.showRewardServerMsg)
+                    SRMessageQueue.addMessage(new SRMessage(r + "[Server] " + w + 
+                            fillInMessage(Properties.rewardServerMsg, player, reward)));                    
             }
             else {
                 // Rewarded player successfully but DB reset failed
@@ -112,5 +107,13 @@ public class PlayerLookupThread implements Runnable {
     private void taskCleanup()
     {
         pl.removeTask(player);
+    }
+    
+    private String fillInMessage(String message, Player player, Long reward)
+    {
+        String newMessage;
+        newMessage = message.replace("$R$", reward.toString());   
+        newMessage = newMessage.replace("$P$", player.getName());
+        return newMessage;
     }
 }
