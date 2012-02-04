@@ -39,10 +39,11 @@ public class SQLStorage implements StorageInterface{
     
     public SQLStorage(SeedReward plugin){
         this.sr = plugin;
-        
+        /*
         try {
             userCon = DriverManager.getConnection(Properties.playerDBURL, 
                     Properties.playerDBUser, Properties.playerDBPass);
+            
             userSteamQuery = userCon.prepareStatement(Properties.userSteamQuery);
         } catch (SQLException ex) {
             SeedReward.log(Level.SEVERE, "Exception connecting to userDB.");
@@ -52,12 +53,13 @@ public class SQLStorage implements StorageInterface{
         try {
             rewardCon = DriverManager.getConnection(Properties.rewardDBURL, 
                     Properties.rewardDBUser, Properties.rewardDBPass);
+            
             userRewardQuery = rewardCon.prepareStatement(Properties.userRewardQuery);
             userResetReward = rewardCon.prepareStatement(Properties.userRewardReset);
         } catch (SQLException ex) {
             SeedReward.log(Level.SEVERE, "Exception connecting to reward DB.");
             SeedReward.log(Level.SEVERE, ex.getMessage());
-        }
+        }*/
     }
     
     public String getPlayerSteam(Player player) {
@@ -116,19 +118,20 @@ public class SQLStorage implements StorageInterface{
         Long reward = null;
         ResultSet rs = null;
         
-        try {
-            userRewardQuery.setString(1, steamID);
-        } catch (SQLException ex) {
-            SeedReward.log(Level.SEVERE, "SeedReward - Error updating prepared statement");
-            SeedReward.log(Level.SEVERE, ex.toString());
+        reward = 20L;
+        
+        if (rewardCon == null)
+        {
+            SeedReward.log(Level.WARNING, "Not connected to seed reward DB");
             return reward;
         }
         
         try {
+            userRewardQuery.setString(1, steamID);
             rs = userRewardQuery.executeQuery();
         } catch (SQLException ex) {
-            SeedReward.log(Level.SEVERE, "SeedReward - Error querying rewards database");
-            SeedReward.log(Level.SEVERE, ex.toString());
+            SeedReward.log(Level.SEVERE, "SeedReward - Exception querying database");
+            SeedReward.log(Level.SEVERE, ex.getMessage());
             return reward;
         }
         
@@ -140,17 +143,16 @@ public class SQLStorage implements StorageInterface{
                 return reward;
             reward = rs.getLong(1);
         } catch (SQLException ex) {
-            SeedReward.log(Level.SEVERE, "SeedReward - Error accessing result set");
-            SeedReward.log(Level.SEVERE, ex.toString());
+            SeedReward.log(Level.SEVERE, "SeedReward - Exception accessing result set");
+            SeedReward.log(Level.SEVERE, ex.getMessage());
             return null;
         }
-        
-        
+               
         return reward;
     }
 
     public boolean resetPlayerReward(String steamID) {
-        return false;
+        return true;
     }
 
     public boolean rewardPlayer(Player player, long amount) {

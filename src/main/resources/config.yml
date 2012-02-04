@@ -7,3 +7,10 @@ RewardDB:
   User: tst_reward
   Pass: CBwy5xTNmAMvN5mx
 LookupURL: http://www.dummy.com/lookup.php?name=%name%
+Messages:
+  Reward:
+    Send: true
+    Message: You earned $R$ ducats today from seeding the TF2 Servers. Good Job!
+  NoReward:
+    Send: true
+    Message: You earned $R$ ducats today from seeding the TF2 Servers. Good Job!

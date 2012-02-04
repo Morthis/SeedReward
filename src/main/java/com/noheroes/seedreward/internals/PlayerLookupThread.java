@@ -68,11 +68,18 @@ public class PlayerLookupThread implements Runnable {
         if (sr.getDB().rewardPlayer(player, reward)) {
             if (sr.getDB().resetPlayerReward(steamID)) {
                 // Rewarded player successfully and reset DB successfully
-                SRMessageQueue.addMessage(new SRMessage(
-                        r + "[Server]" + w + " You have earned " + reward.toString() + " ducats from seeding.", player));
-                SRMessageQueue.addMessage(new SRMessage(
-                        r + "[Server] " + w + player.getName() + " has earned " + reward.toString() +
-                        " ducats from seeding.  Type /help seeding to learn more."));                    
+                String message;
+                message = Properties.rewardMsg;
+                
+                message.replace("$R$", "test");
+                
+                sr.log(Level.INFO, Properties.rewardMsg);
+                sr.log(Level.INFO, message);
+                
+                //SRMessageQueue.addMessage(new SRMessage(
+                       // r + "[Server]" + w + message, player));
+                //SRMessageQueue.addMessage(new SRMessage(
+                  //      r + "[Server] " + w + Properties.rewardMsg));                    
             }
             else {
                 // Rewarded player successfully but DB reset failed

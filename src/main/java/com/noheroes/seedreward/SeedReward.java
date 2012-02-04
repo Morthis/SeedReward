@@ -4,16 +4,12 @@
  */
 package com.noheroes.seedreward;
 
-import com.noheroes.seedreward.interfaces.Balance;
-import com.noheroes.seedreward.internals.DummyBalance;
+
 import com.noheroes.seedreward.internals.Properties;
 import com.noheroes.seedreward.internals.SQLStorage;
 import com.noheroes.seedreward.internals.SRMessageQueue;
-import com.noheroes.seedreward.internals.iConomy5Balance;
-import com.noheroes.seedreward.internals.iConomy6Balance;
 import com.noheroes.seedreward.listeners.SRPlayerListener;
 import com.noheroes.seedreward.listeners.SRPluginListener;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,37 +60,7 @@ public class SeedReward extends JavaPlugin {
         messageQueue.startScheduler();
         
         db = new SQLStorage(this);
-        
-        //We're using a softdepend, so the following should hook an iconomy.  
-        //We do have a plugin listener active, in case the iconomy plugin is enabled
-        //or disabled after this loads. We try 6, then 5, then dummy, in case more than
-        //one is active.
-        
-        // Disabled while experimenting with vault as replacement
-        /*
-        if(pm.isPluginEnabled("iConomy")){
-            if(pm.getPlugin("iConomy").getClass().getName().equals("com.iCo6.iConomy")) {
-                iConomy = new iConomy6Balance(this, (com.iCo6.iConomy)pm.getPlugin("iConomy"));
-                SeedReward.log(Level.INFO, "Hooked iConomy 6.");
-            } 
 
-            else if(pm.getPlugin("iConomy").getClass().getName().equals("com.iConomy.iConomy")) {
-                iConomy = new iConomy5Balance(this, (com.iConomy.iConomy)pm.getPlugin("iConomy"));
-                SeedReward.log(Level.INFO, "Hooked iConomy 5.");
-            } 
-            
-            else {
-                //May be iconomy 4 or other unsupported version.
-                iConomy = new DummyBalance(this);
-                SeedReward.log(Level.INFO, "No economy plugin found. Using Dummy economy.");
-            }
-            
-        } else {
-            //No iconomy found.  Just use dummy balance until iconomy is loaded.
-            iConomy = new DummyBalance(this);
-            SeedReward.log(Level.INFO, "No economy plugin found. Using Dummy economy.");
-        }
-*/
         PluginDescriptionFile pdf = this.getDescription();
     
         if (!setupEconomy()) {
@@ -120,17 +86,13 @@ public class SeedReward extends JavaPlugin {
     {
         return econ != null;
     }
-    
-    /*
-    public static Balance getBalanceHandler() {
-        return iConomy;
-    }
-    
-    public static void setBalanceHandler(Balance handler) {
-        iConomy = handler;
-    }
-    */
+
     private void loadSRConfig(FileConfiguration config) {
+        
+        //config.addDefault("Messages.Reward.Send", true);
+        //config.addDefault("Messages.Reward.Message", "You earned $R$ ducats today from seeding the TF2 Servers. Good Job!");
+        
+        
         config.options().copyDefaults(true);
 
         Properties.playerDBURL = config.getString("PlayerDB.url");
@@ -142,6 +104,10 @@ public class SeedReward extends JavaPlugin {
         Properties.rewardDBPass = config.getString("RewardDB.Pass");
         
         Properties.ConnectionURL = config.getString("LookupURL");
+        
+        Properties.showRewardMsg = config.getBoolean("Messages.Reward.Send");
+        Properties.rewardMsg = config.getString("Messages.Reward.Message");
+               
     }     
     
      private boolean setupEconomy() {

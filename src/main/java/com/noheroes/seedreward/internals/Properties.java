@@ -23,6 +23,18 @@ public class Properties {
     
     public static String ConnectionURL;
     
+    public static boolean showRewardMsg;
+    public static String rewardMsg;
+    
+    public static boolean showNoRewardMsg;
+    public static String noRewardMsg;
+    
+    public static boolean showRewardServerMsg;
+    public static String rewardServerMsg;
+    
+    public static boolean showNoRewardServerMsg;
+    public static String noRewardServerMsg;
+    
     public static final String userSteamQuery = "SELECT steamID from tbl_test WHERE name = ?";
     public static final String userRewardQuery = "SELECT ducats FROM reward WHERE steamID = ?";
     public static final String userRewardReset = "UPDATE tbl_test SET reward = 0 WHERE steamID = ?";
