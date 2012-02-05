@@ -41,9 +41,16 @@ public class PlayerLookupThread implements Runnable {
         
         
         if(steamID == null) {
-            sr.log(Level.WARNING, "SeedReward - Unable to look up SteamID of player " + player.getName());
-            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
-                    " Unable to look up your SteamID.  The database may be temporarily offline or your steamID is not added to your profile.", player));
+            if (Properties.showNoSteamID)
+                sendMessage(Properties.noSteamIDMsg, player);
+            taskCleanup();
+            return;
+        }
+        
+        if  (steamID.equals("Database access error"))
+        {
+            if (Properties.showDBError)
+                sendMessage(Properties.DBErrorMsg, player);
             taskCleanup();
             return;
         }
@@ -51,40 +58,35 @@ public class PlayerLookupThread implements Runnable {
         reward = sr.getDB().getPlayerReward(steamID);       
         
         if (reward == null) {
-            sr.log(Level.WARNING, "SeedReward - Unable to load reward value from database");
-            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
-                    " Unable to look up your rewards earned for seeding.  The rewards database may be temporarily offline.", player));
+            if (Properties.showDBError)
+                sendMessage(Properties.DBErrorMsg, player);
             taskCleanup();
             return;
         }
         
         if (reward == 0) {
-            SRMessageQueue.addMessage(new SRMessage(
-                    r + "[Server]" + w + " You have not earned any ducats from seeding. To learn more type /help seeding.", player));
+            if (Properties.showNoRewardMsg)
+                sendMessage(Properties.noRewardMsg, player, reward);
+            if (Properties.showNoRewardServerMsg)
+                sendMessage(Properties.noRewardServerMsg, player, reward, true);
             taskCleanup();
             return;
         }
         
         if (sr.getDB().rewardPlayer(player, reward)) {
             if (sr.getDB().resetPlayerReward(steamID)) {
-                // Rewarded player successfully and reset DB successfully               
-                
+                // Rewarded player successfully and reset DB successfully                              
                 if (Properties.showRewardMsg)
-                    SRMessageQueue.addMessage(new SRMessage( r + "[Server]" + w + 
-                            fillInMessage(Properties.rewardMsg, player, reward), player));
+                    sendMessage(Properties.rewardMsg, player, reward);
                 if (Properties.showRewardServerMsg)
-                    SRMessageQueue.addMessage(new SRMessage(r + "[Server] " + w + 
-                            fillInMessage(Properties.rewardServerMsg, player, reward)));                    
+                    sendMessage(Properties.rewardServerMsg, player, reward, true);
             }
             else {
                 // Rewarded player successfully but DB reset failed
                 if (sr.getDB().chargePlayer(player, reward)) {
                     // Player's balance reset back to normal following a DB reset failure
-                    SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
-                            " You have earned " + reward.toString() + 
-                            " ducats from seeding.  The ducats could not be awarded, likely because the database is temporarily offline." + 
-                            "  They will be awarded next time you log on.", player));
-                    sr.log(Level.WARNING, "SeedReward - Unable to reset the reward database for player " + player.getName());
+                    if (Properties.showDBError)
+                        sendMessage(Properties.DBErrorMsg, player, reward);
                 }
                 else {
                     // Player's balance did not reset back to normal following a DB reset failure
@@ -94,10 +96,8 @@ public class PlayerLookupThread implements Runnable {
         }
         else {
             // Failed to reward player, database reset not attempted
-            SRMessageQueue.addMessage(new SRMessage(r + "[Server]" + w + 
-                    " You have earned " + reward.toString() + " ducats from seeding.  Because the economy plugin is currently not working or disabled " + 
-                    "these will be awarded to you next time you log in."));
-            sr.log(Level.WARNING, "SeedReward - Unable to award player " + player.getName() + " his seeding reward.");
+            if (Properties.showDBError)
+                sendMessage(Properties.DBErrorMsg, player);
         }                
         
         // Removes the task ID from the hashmap, this should be the last line so that it is executed right before the thread finishes
@@ -112,8 +112,32 @@ public class PlayerLookupThread implements Runnable {
     private String fillInMessage(String message, Player player, Long reward)
     {
         String newMessage;
-        newMessage = message.replace("$R$", reward.toString());   
-        newMessage = newMessage.replace("$P$", player.getName());
+        
+        newMessage = message.replace("$P$", player.getName());
+        if (reward != null)
+            newMessage = newMessage.replace("$R$", reward.toString());   
         return newMessage;
+    }
+    
+    // Used for sending error messages, reward value defaults to null because none could be looked up and displaying it would make no sense
+    private void sendMessage(String message, Player player)
+    {
+        sendMessage(message, player, null, false);
+    }
+    
+    // Default to player whisper if serverWideAnnouncement isn't given
+    private void sendMessage(String message, Player player, Long reward)
+    {
+        sendMessage(message, player, reward, false);
+    }
+    
+    private void sendMessage(String message, Player player, Long reward, boolean serverWideAnnouncement)
+    {
+        if (serverWideAnnouncement)
+            SRMessageQueue.addMessage(new SRMessage(r + "[Server] " + w + 
+                fillInMessage(message, player, reward)));   
+        else
+            SRMessageQueue.addMessage(new SRMessage(r + "[Server] " + w + 
+                fillInMessage(message, player, reward), player));   
     }
 }

@@ -26,3 +26,7 @@ Messages:
   DatabaseError:
     Send: true
     Message: The seed reward database could not be contacted or had an error.
+  ServerReminder:
+    Send: true
+    Message: Did you know it's possible to earn ducats while seeding?
+    Interval: 30

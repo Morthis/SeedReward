@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event.Priority;
@@ -32,7 +33,6 @@ public class SeedReward extends JavaPlugin {
     private final SRPluginListener pluginListener = new SRPluginListener(this);
     
     private static SRMessageQueue messageQueue;
-    //private static Balance iConomy = null;
     
     private SQLStorage db;
     private static Server server;
@@ -58,14 +58,16 @@ public class SeedReward extends JavaPlugin {
 
         messageQueue = new SRMessageQueue(this);
         messageQueue.startScheduler();
-        
+          
         db = new SQLStorage(this);
 
+        setupServerReminderScheduler();
+        
         PluginDescriptionFile pdf = this.getDescription();
     
         if (!setupEconomy()) {
             log(Level.SEVERE, pdf.getName() + " - Vault failed to hook into server economy plugin");
-        }
+        }      
         
         log(Level.INFO, pdf.getName() + " version " + pdf.getVersion() + " is enabled.");
     }
@@ -110,7 +112,17 @@ public class SeedReward extends JavaPlugin {
         Properties.rewardServerMsg = config.getString("Messages.RewardServer.Message");
         
         Properties.showNoRewardServerMsg = config.getBoolean("Messages.NoRewardServer.Send");
-        Properties.noRewardServerMsg = config.getString("Messages.NoRewardServer.Message");             
+        Properties.noRewardServerMsg = config.getString("Messages.NoRewardServer.Message");
+        
+        Properties.showNoSteamID = config.getBoolean("Messages.NoSteamID.Send");
+        Properties.noSteamIDMsg = config.getString("Messages.NoSteamID.Message");
+        
+        Properties.showDBError = config.getBoolean("Messages.DatabaseError.Send");
+        Properties.DBErrorMsg = config.getString("Messages.DatabaseError.Message");
+        
+        Properties.sendServerReminders = config.getBoolean("Messages.ServerReminder.Send");
+        Properties.serverReminderMsg = config.getString("Messages.ServerReminder.Message");
+        Properties.serverReminderInterval = config.getInt("Messages.ServerReminder.Interval");
     }     
     
      private boolean setupEconomy() {
@@ -121,4 +133,19 @@ public class SeedReward extends JavaPlugin {
         econ = rsp.getProvider();
         return econ != null;
     }
+     
+     private void setupServerReminderScheduler()
+     {
+         if (Properties.sendServerReminders)
+         {
+             Long interval;
+             interval = (long)Properties.serverReminderInterval * (long)Properties.numberOfTicksPerSecond;
+             this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+                 
+                 public void run() {
+                     broadcast(ChatColor.RED + "[Server] " + ChatColor.WHITE + Properties.serverReminderMsg);
+                 }
+             }, interval, interval);
+         }
+     }
 }

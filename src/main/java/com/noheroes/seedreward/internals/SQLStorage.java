@@ -109,7 +109,7 @@ public class SQLStorage implements StorageInterface{
 //        }
         
         String steamID = null;
-        steamID = "STEAM_0:1:37108831";
+        steamID = "Datab access error";
       
         return steamID;
     }
@@ -118,7 +118,7 @@ public class SQLStorage implements StorageInterface{
         Long reward = null;
         ResultSet rs = null;
         
-        reward = 20L;
+        reward = 0L;
         
         if (rewardCon == null)
         {

@@ -35,6 +35,17 @@ public class Properties {
     public static boolean showNoRewardServerMsg;
     public static String noRewardServerMsg;
     
+    public static boolean showNoSteamID;
+    public static String noSteamIDMsg;
+    
+    public static boolean showDBError;
+    public static String DBErrorMsg;
+    
+    public static boolean sendServerReminders;
+    public static String serverReminderMsg;
+    public static int serverReminderInterval;
+    public static final int numberOfTicksPerSecond = 20;  // The default for minecraft is 20 ticks per second.
+    
     public static final String userSteamQuery = "SELECT steamID from tbl_test WHERE name = ?";
     public static final String userRewardQuery = "SELECT ducats FROM reward WHERE steamID = ?";
     public static final String userRewardReset = "UPDATE tbl_test SET reward = 0 WHERE steamID = ?";
